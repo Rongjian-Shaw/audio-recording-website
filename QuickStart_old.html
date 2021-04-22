@@ -45,7 +45,10 @@ console.log(Tips);
 		width: 100%;
 
 		word-wrap: break-word;
-		background: url(./jarvis2.gif);
+		/*background:#f5f5f5 center top no-repeat;*/
+		/* background-size: auto 680px; */
+		/* background: url(./jarvis6.gif) no-repeat center 0px; */
+		background: url(./jarvis6.gif);
 		background-repeat: no-repeat;
 		background-size: 100% auto;
 		background-position:center;
@@ -62,29 +65,31 @@ console.log(Tips);
 	}
 	
 	.main{
-		margin-top:10px;
-		margin-left:10px;
+		margin:0 auto;
 		width: 100%;
 		height: 100%;
-
-		display:flex;
-	}
-
-	.reclog {
-		width:25%;
 	}
 	
 	.mainBox{
 		height: 100%;
 		width: 100%;
-		margin-top:-20px;
-		margin-left:50px;
 		
-		display: flex;
-		flex-direction: row;
-		align-items:flex-end;
+		margin-top:12px;
+		padding: 12px;
+		border-radius: 6px;
+		background: #fff;
+		--border: 1px solid #06c;
+		box-shadow: 2px 2px 3px #aaa;
+		background:rgba(255,00,255,0);
+
+		display:flex;
+		flex-direction: column;
 	}
 
+	.options {
+		display: flex;
+		flex-direction: row;
+	}
 	
 	.btns button{
 		display: inline-block;
@@ -119,7 +124,6 @@ console.log(Tips);
 		padding:2px 8px;
 		border-radius: 99px;
 	}
-
 	</style>
 
 </head>
@@ -128,20 +132,22 @@ console.log(Tips);
 <!-- 【2】构建界面 -->
 <div class="main">
 	<!-- 日志输出区域 -->
-	<div class="reclog">Log</div>
-
+	<div class="mainBox logBox">
+		<div class="reclog"></div>
+	</div>
 	<div class="mainBox">
-		<!-- 按钮控制区域 -->
-		<div class="pd btns">
-			<button onclick="recOpen()">request permission</button>
-			<button onclick="recClose()">close recorder</button>
-			<button onclick="recStart()">record</button>
-			<button onclick="recStop()">stop</button>
-			<!-- <button onclick="recPause()">suspend</button> -->
-			<button onclick="recResume()">continue</button>
-			<button onclick="recPlay()">play</button>
-			<button onclick="recUpload()">upload</button>
-		</div>
+		<div class="options">
+			<!-- 按钮控制区域 -->
+			<div class="pd btns">
+				<button onclick="recOpen()">request permission</button>
+				<button onclick="recClose()">close recorder</button>
+				<button onclick="recStart()">record</button>
+				<button onclick="recStop()">stop</button>
+				<button onclick="recPause()">suspend</button>
+				<button onclick="recResume()">continue</button>
+				<button onclick="recPlay()">play</button>
+				<button onclick="recUpload()">upload</button>
+			</div>
 			
 			<!-- 波形绘制区域 -->
 			<div class="warea">
@@ -155,6 +161,7 @@ console.log(Tips);
 					<div style="border:1px solid #ccc;display:inline-block"><div style="height:100px;width:300px;" class="recwave"></div></div>
 				</div>
 			</div>
+		</div>
 	</div>
 </div>
 
@@ -188,15 +195,15 @@ var recOpen=function(){//一般在显示出录音按钮或相关的录音界面�
 		//此处创建这些音频可视化图形绘制浏览器支持妥妥的
 		wave=Recorder.FrequencyHistogramView({elem:".recwave"});
 		
-		reclog("Recording has been turned on. You can click record to start recording",2);
+		reclog("已打开录音，可以点击录制开始录音了",2);
 	},function(msg,isUserNotAllow){//用户拒绝未授权或不支持
 		dialogCancel(); //如果开启了弹框，此处需要取消
-		reclog((isUserNotAllow?"UserNotAllow，":"")+"Failed to open recording："+msg,1);
+		reclog((isUserNotAllow?"UserNotAllow，":"")+"打开录音失败："+msg,1);
 	});
 	
 	window.waitDialogClick=function(){
 		dialogCancel();
-		reclog("Open failed: permission request ignored，<span style='color:#f00'>Pop up windows that users actively click on</span>",1);
+		reclog("打开失败：权限请求被忽略，<span style='color:#f00'>用户主动点击的弹窗</span>",1);
 	};
 };
 
@@ -206,9 +213,9 @@ var recOpen=function(){//一般在显示出录音按钮或相关的录音界面�
 function recClose(){
 	if(rec){
 		rec.close();
-		reclog("closed");
+		reclog("已关闭");
 	}else{
-		reclog("Recording not turned on",1);
+		reclog("未打开录音",1);
 	};
 };
 
@@ -219,9 +226,9 @@ function recStart(){//打开了录音后才能进行start、stop调用
 	if(rec&&Recorder.IsOpen()){
 		recBlob=null;
 		rec.start();
-		reclog("Recording started...");
+		reclog("已开始录音...");
 	}else{
-		reclog("Recording not turned on",1);
+		reclog("未打开录音",1);
 	};
 };
 
@@ -230,7 +237,7 @@ function recPause(){
 	if(rec&&Recorder.IsOpen()){
 		rec.pause();
 	}else{
-		reclog("Recording not turned on",1);
+		reclog("未打开录音",1);
 	};
 };
 /**恢复录音**/
@@ -238,23 +245,23 @@ function recResume(){
 	if(rec&&Recorder.IsOpen()){
 		rec.resume();
 	}else{
-		reclog("Recording not turned on",1);
+		reclog("未打开录音",1);
 	};
 };
 
 /**结束录音，得到音频文件**/
 function recStop(){
 	if(!(rec&&Recorder.IsOpen())){
-		reclog("Recording not turned on",1);
+		reclog("未打开录音",1);
 		return;
 	};
 	rec.stop(function(blob,duration){
 		console.log(blob,(window.URL||webkitURL).createObjectURL(blob),"时长:"+duration+"ms");
 		
 		recBlob=blob;
-		reclog("Mp3 recorded："+duration+"ms "+blob.size+"bytes，You can click to play and upload",2);
+		reclog("已录制mp3："+duration+"ms "+blob.size+"字节，可以点击播放、上传了",2);
 	},function(msg){
-		reclog("Recording failed:"+msg,1);
+		reclog("录音失败:"+msg,1);
 	});
 };
 
@@ -266,10 +273,10 @@ function recStop(){
 
 
 
-/** 播放 **/
+/**播放**/
 function recPlay() {
 	if(!recBlob) {
-		reclog("Please record, then stop and play again",1);
+		reclog("请先录音，然后停止后再播放",1);
 		return;
 	};
 	var cls=("a"+Math.random()).replace(".","");
@@ -286,11 +293,11 @@ function recPlay() {
 	},5000);
 };
 
-/** 上传 **/
+/**上传**/
 function recUpload(){
 	var blob=recBlob;
 	if(!blob){
-		reclog("Please record, then stop and play again",1);
+		reclog("请先录音，然后停止后再上传",1);
 		return;
 	};
 	
@@ -301,16 +308,16 @@ function recUpload(){
 		return function(){
 			if(xhr.readyState==4){
 				if(xhr.status==200){
-					reclog(title+"Upload succeeded",2);
+					reclog(title+"上传成功",2);
 				}else{
-					reclog(title+"If the upload is not completed, the demo upload address does not need to pay attention to the upload result, as long as the request data structure seen in the network panel of the browser console is expected", "#d8c1a0");
+					reclog(title+"没有完成上传，演示上传地址无需关注上传结果，只要浏览器控制台内Network面板内看到的请求数据结构是预期的就ok了。", "#d8c1a0");
 					
-					console.error(title+"Upload failed",xhr.status,xhr.responseText);
+					console.error(title+"上传失败",xhr.status,xhr.responseText);
 				};
 			};
 		};
 	};
-	reclog("Start uploading to"+api+"，spinning...");
+	reclog("开始上传到"+api+"，请求稍后...");
 
 	/***方式一：将blob文件转成base64纯文本编码，使用普通application/x-www-form-urlencoded表单上传***/
 	var reader=new FileReader();
