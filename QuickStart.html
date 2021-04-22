@@ -323,7 +323,7 @@ function recUpload(){
 		var xhr=new XMLHttpRequest();
 		xhr.open("POST", api);
 		xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-		xhr.onreadystatechange=onreadystatechange("上传方式一【Base64】");
+		xhr.onreadystatechange=onreadystatechange("Way 2【Base64】");
 		xhr.send(postData);
 	};
 	reader.readAsDataURL(blob);
@@ -335,7 +335,7 @@ function recUpload(){
 	
 	var xhr=new XMLHttpRequest();
 	xhr.open("POST", api);
-	xhr.onreadystatechange=onreadystatechange("上传方式二【FormData】");
+	xhr.onreadystatechange=onreadystatechange("Way 2【FormData】");
 	xhr.send(form);
 };
 
